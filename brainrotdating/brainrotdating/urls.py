@@ -11,7 +11,7 @@ urlpatterns = [
 
     # 👇 Другие фронтенд страницы (пока ведут на главную)
     path('swipe/', TemplateView.as_view(template_name='frontend/swipe.html'), name='swipe'),
-    path('test/', TemplateView.as_view(template_name='frontend/index.html'), name='test'),
+    path('test/', TemplateView.as_view(template_name='frontend/test.html'), name='test'),
     path('profile/', TemplateView.as_view(template_name='frontend/index.html'), name='profile'),
     path('login/', TemplateView.as_view(template_name='frontend/login.html'), name='login'),
     path('register/', TemplateView.as_view(template_name='frontend/register.html'), name='register'),

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrainRot Тест - RottenLove</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/test.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(to bottom, #312b2f, #97787E);
+            min-height: 100vh;
+            font-family: "Roboto Condensed", sans-serif;
+        }
+        
+        .test-nav {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-logo {
+            font-family: 'Big Shoulders Stencil', sans-serif;
+            font-size: 1.8rem;
+            color: #EFBDC6;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: opacity 0.3s;
+        }
+        
+        .back-btn:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="test-nav">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <i class="fas fa-brain"></i>
+                BrainRot Dating
+            </a>
+            
+            <a href="/" class="back-btn">
+                <i class="fas fa-arrow-left"></i> На главную
+            </a>
+        </div>
+    </nav>
+    
+    <!-- Основной контейнер теста -->
+    <main class="test-main-container">
+        <div class="test-container">
+            <!-- Шапка теста -->
+            <div class="test-header">
+                <div class="test-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h1>BrainRot Тест</h1>
+                <p class="test-subtitle">Ответь на вопросы и узнай, какой BrainRot персонаж ты!</p>
+                <p class="test-description">
+                    Каждый ответ приближает тебя к определению твоего истинного BrainRot персонажа. 
+                    Отвечай честно, не задумываясь слишком долго.
+                </p>
+            </div>
+            
+            <!-- Прогресс бар -->
+            <div class="test-progress-container">
+                <div class="progress-label">
+                    <span>Вопрос <span id="currentQuestion">1</span> из <span id="totalQuestions">15</span></span>
+                    <span id="progressPercent">7%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+            
+            <!-- Контейнер вопроса -->
+            <div class="question-container">
+                <div class="question-card">
+                    <div class="question-header">
+                        <h2 id="questionText">Загрузка вопроса...</h2>
+                    </div>
+                    
+                    <div class="options-container" id="optionsContainer">
+                        <!-- Варианты ответов будут здесь -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Навигация -->
+            <div class="test-navigation">
+                <button class="nav-btn prev-btn" id="prevBtn" disabled>
+                    <i class="fas fa-arrow-left"></i> Назад
+                </button>
+                
+                <div class="question-counter">
+                    <span id="counter">1/15</span>
+                </div>
+                
+                <button class="nav-btn next-btn" id="nextBtn">
+                    Далее <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            
+            <!-- Кнопка завершения -->
+            <button class="submit-btn" id="submitBtn" style="display: none;">
+                <i class="fas fa-paper-plane"></i> Узнать результат
+            </button>
+            
+            <!-- Результат теста (скрыт изначально) -->
+            <div class="result-container" id="resultContainer" style="display: none;">
+                <div class="result-card">
+                    <div class="result-icon">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    
+                    <h2>Твой BrainRot персонаж:</h2>
+                    <h1 id="resultCharacterName" class="character-name">Загрузка...</h1>
+                    
+                    <div class="character-image" id="resultCharacterImage">
+                        <!-- Изображение персонажа -->
+                    </div>
+                    
+                    <div class="character-description">
+                        <p id="resultDescription">Загрузка описания...</p>
+                        <p id="resultCompatibility">Совместимость с другими персонажами: <span id="compatibilityScore">...</span></p>
+                    </div>
+                    
+                    <div class="character-traits" id="resultTraits">
+                        <!-- Черты персонажа -->
+                    </div>
+                    
+                    <div class="result-actions">
+                        <button class="action-btn primary-btn" id="gotoProfileBtn">
+                            <i class="fas fa-user"></i> Перейти в профиль
+                        </button>
+                        <button class="action-btn secondary-btn" id="gotoSwipeBtn">
+                            <i class="fas fa-heart"></i> Начать свайпить
+                        </button>
+                        <a href="/" class="action-btn tertiary-btn">
+                            <i class="fas fa-home"></i> На главную
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Инструкция -->
+            <div class="instructions">
+                <h3><i class="fas fa-lightbulb"></i> Как проходить тест:</h3>
+                <ul>
+                    <li>Выбирай ответ, который первым приходит в голову</li>
+                    <li>Не пытайся "подстроить" результат</li>
+                    <li>Можно пропустить вопрос и вернуться позже</li>
+                    <li>Результат появится сразу после завершения</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Футер -->
+    <footer class="test-footer">
+        <div class="container">
+            <p>BrainRot Dating © 2025 • Тест на определение персонажа</p>
+            <p class="small-text">
+                <i class="fas fa-info-circle"></i> Все персонажи вымышлены. Результаты теста определяются алгоритмом на основе твоих ответов.
+            </p>
+        </div>
+    </footer>
+    
+    <!-- Подключаем скрипты -->
+    <script src="/static/app.js"></script>
+    <script src="/static/test.js"></script>
+</body>
+</html>

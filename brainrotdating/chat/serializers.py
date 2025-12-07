@@ -64,7 +64,7 @@ class MatchSerializer(serializers.ModelSerializer):
     def get_unread_count(self, obj):
         request = self.context.get('request')
         if request and request.user:
-            return obj.get_unread_count(request.user)  # <-- измените вызов
+            return obj.get_unread_count(request.user)  # <--св измените вызов
         return 0
 
     def get_last_message(self, obj):

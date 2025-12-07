@@ -1,0 +1,462 @@
+/* Swipe System Styles */
+.swipe-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to bottom, #312b2f, #97787E);
+}
+
+.swipe-header {
+    text-align: center;
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+.swipe-header h1 {
+    font-family: 'Big Shoulders Stencil', sans-serif;
+    font-size: 2.5rem;
+    color: #EFBDC6;
+    margin-bottom: 10px;
+}
+
+.swipe-header p {
+    color: #ffffff;
+    opacity: 0.8;
+    font-size: 1.1rem;
+}
+
+/* Карточка персонажа */
+.swipe-card {
+    width: 100%;
+    max-width: 400px;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.swipe-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+}
+
+.character-image {
+    height: 300px;
+    background-size: cover;
+    background-position: center;
+    background-color: #EFBDC6;
+    position: relative;
+}
+
+.popular-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(to right, #ff6b6b, #ee5a52);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.character-info {
+    padding: 25px;
+}
+
+.character-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.character-name {
+    font-family: 'Big Shoulders Stencil', sans-serif;
+    font-size: 1.8rem;
+    color: #312b2f;
+    margin: 0;
+}
+
+.character-age {
+    font-size: 1.5rem;
+    color: #EFBDC6;
+    font-weight: bold;
+}
+
+.character-category {
+    display: inline-block;
+    background: #EFBDC6;
+    color: #312b2f;
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.character-description {
+    margin-bottom: 20px;
+    color: #666;
+    line-height: 1.6;
+}
+
+.character-traits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.trait-tag {
+    background: #f0f0f0;
+    color: #666;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.character-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 10px;
+}
+
+.stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #888;
+}
+
+.stat-value {
+    font-weight: bold;
+    color: #312b2f;
+    font-size: 1.1rem;
+}
+
+.character-quote {
+    padding: 15px;
+    background: linear-gradient(to right, rgba(239, 189, 198, 0.1), rgba(239, 189, 198, 0.2));
+    border-radius: 10px;
+    font-style: italic;
+    color: #312b2f;
+    text-align: center;
+}
+
+/* Кнопки свайпов */
+.swipe-controls {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.swipe-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.swipe-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.swipe-btn:active {
+    transform: scale(0.95);
+}
+
+#dislikeBtn {
+    background: linear-gradient(to right, #667eea, #764ba2);
+    color: white;
+}
+
+#likeBtn {
+    background: linear-gradient(to right, #EFBDC6, #97787E);
+    color: white;
+}
+
+#superLikeBtn {
+    background: linear-gradient(to right, #ffd93d, #ff6b6b);
+    color: white;
+}
+
+#skipBtn {
+    background: #f0f0f0;
+    color: #666;
+    font-size: 1.2rem;
+}
+
+/* Статистика */
+.swipe-stats {
+    margin-top: 30px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    text-align: center;
+}
+
+.stat-item {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+}
+
+.stat-number {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #EFBDC6;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: #ffffff;
+    opacity: 0.8;
+}
+
+/* Анимации свайпов */
+.swipe-right {
+    animation: swipeRight 0.5s forwards;
+}
+
+.swipe-left {
+    animation: swipeLeft 0.5s forwards;
+}
+
+.swipe-up {
+    animation: swipeUp 0.5s forwards;
+}
+
+@keyframes swipeRight {
+    0% { transform: translateX(0) rotate(0); opacity: 1; }
+    100% { transform: translateX(200px) rotate(20deg); opacity: 0; }
+}
+
+@keyframes swipeLeft {
+    0% { transform: translateX(0) rotate(0); opacity: 1; }
+    100% { transform: translateX(-200px) rotate(-20deg); opacity: 0; }
+}
+
+@keyframes swipeUp {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-200px); opacity: 0; }
+}
+
+/* Сообщения */
+.no-characters, .error-message {
+    text-align: center;
+    padding: 50px 20px;
+}
+
+.no-characters-icon, .error-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+}
+
+.no-characters h3, .error-message h3 {
+    color: #312b2f;
+    margin-bottom: 10px;
+}
+
+.no-characters p, .error-message p {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.small-text {
+    font-size: 0.9rem;
+    color: #888;
+    margin-top: 10px;
+}
+
+/* Попап мэтча */
+.match-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s;
+}
+
+.match-content {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    animation: popIn 0.5s;
+}
+
+.match-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    animation: pulse 1s infinite;
+}
+
+.match-content h3 {
+    color: #EFBDC6;
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.match-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes popIn {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* Фильтры */
+.swipe-filters {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    width: 100%;
+    max-width: 400px;
+    backdrop-filter: blur(10px);
+}
+
+.filter-title {
+    color: white;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+.filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.filter-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 0.9rem;
+}
+
+.filter-btn:hover {
+    background: rgba(239, 189, 198, 0.4);
+}
+
+.filter-btn.active {
+    background: #EFBDC6;
+    color: #312b2f;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .swipe-container {
+        padding: 10px;
+    }
+    
+    .swipe-header h1 {
+        font-size: 2rem;
+    }
+    
+    .swipe-card {
+        max-width: 100%;
+    }
+    
+    .character-image {
+        height: 250px;
+    }
+    
+    .swipe-controls {
+        gap: 15px;
+    }
+    
+    .swipe-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .swipe-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 1.2rem;
+    }
+    
+    .character-info {
+        padding: 15px;
+    }
+    
+    .character-name {
+        font-size: 1.5rem;
+    }
+    
+    .match-content {
+        padding: 20px;
+    }
+}

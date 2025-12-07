@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Свайпер - BrainRot Dating</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/swipe.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(to bottom, #312b2f, #97787E);
+            min-height: 100vh;
+            font-family: "Roboto Condensed", sans-serif;
+        }
+
+        .swipe-nav {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-family: 'Big Shoulders Stencil', sans-serif;
+            font-size: 1.8rem;
+            color: #EFBDC6;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+
+        .nav-link:hover {
+            opacity: 0.8;
+        }
+
+        .nav-link.active {
+            color: #EFBDC6;
+            border-bottom: 2px solid #EFBDC6;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: #EFBDC6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #312b2f;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .page-footer {
+            text-align: center;
+            padding: 30px;
+            color: white;
+            opacity: 0.7;
+            font-size: 0.9rem;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="swipe-nav">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <i class="fas fa-brain"></i>
+                BrainRot Dating
+            </a>
+
+            <div class="nav-links">
+                <a href="/" class="nav-link">Главная</a>
+                <a href="/swipe/" class="nav-link active">Свайпер</a>
+                <a href="/matches/" class="nav-link">Мэтчи</a>
+                <a href="/profile/" class="nav-link">Профиль</a>
+                <a href="/chat/" class="nav-link">Чат</a>
+            </div>
+
+            <div class="user-menu">
+                <div class="user-avatar" id="userAvatar" onclick="window.location.href='/profile/'">
+                    <i class="fas fa-user"></i>
+                </div>
+                <button class="btn-secondary" onclick="Auth.logout()" style="padding: 8px 15px;">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Основной контент -->
+    <main class="swipe-container">
+        <!-- Заголовок -->
+        <div class="swipe-header">
+            <h1>BrainRot Свайпер</h1>
+            <p>Свайпайте персонажей вправо (❤️), если нравятся, влево (👎) — если нет</p>
+        </div>
+
+        <!-- Статистика -->
+        <div class="swipe-stats" id="swipeStats">
+            <!-- Статистика загружается через JS -->
+        </div>
+
+        <!-- Карточка персонажа -->
+        <div class="swipe-card" id="swipeCard">
+            <!-- Карточка загружается через JS -->
+        </div>
+
+        <!-- Кнопки управления -->
+        <div class="swipe-controls">
+            <button class="swipe-btn" id="dislikeBtn" title="Дизлайк (Swipe Left)">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <button class="swipe-btn" id="skipBtn" title="Пропустить (Space)">
+                <i class="fas fa-redo"></i>
+            </button>
+
+            <button class="swipe-btn" id="superLikeBtn" title="Суперлайк (Swipe Up)">
+                <i class="fas fa-star"></i>
+            </button>
+
+            <button class="swipe-btn" id="likeBtn" title="Лайк (Swipe Right)">
+                <i class="fas fa-heart"></i>
+            </button>
+        </div>
+
+        <!-- Подсказки -->
+        <div style="margin-top: 20px; color: white; opacity: 0.6; text-align: center; font-size: 0.9rem;">
+            <p>
+                <i class="fas fa-mouse-pointer"></i> Перетаскивайте карточку мышью<br>
+                <i class="fas fa-mobile-alt"></i> Или свайпайте на телефоне<br>
+                <i class="fas fa-keyboard"></i> Используйте стрелки ← → ↑ и Space
+            </p>
+        </div>
+    </main>
+
+    <!-- Футер -->
+    <footer class="page-footer">
+        <p>BrainRot Dating © 2025 • Найди своего BrainRot персонажа</p>
+        <p style="font-size: 0.8rem; margin-top: 5px;">
+            <i class="fas fa-info-circle"></i> Все персонажи вымышлены. Любые совпадения случайны.
+        </p>
+    </footer>
+
+    <!-- Подключаем скрипты -->
+    <script src="/static/app.js"></script>
+    <script src="/static/swipe.js"></script>
+
+    <!-- Дополнительный JS для управления клавиатурой -->
+    <script>
+        // Управление с клавиатуры
+        document.addEventListener('keydown', (e) => {
+            if (!window.swipeSystem) return;
+
+            switch(e.key) {
+                case 'ArrowLeft':
+                case 'a':
+                case 'A':
+                    e.preventDefault();
+                    window.swipeSystem.swipe('dislike');
+                    break;
+
+                case 'ArrowRight':
+                case 'd':
+                case 'D':
+                    e.preventDefault();
+                    window.swipeSystem.swipe('like');
+                    break;
+
+                case 'ArrowUp':
+                case 'w':
+                case 'W':
+                    e.preventDefault();
+                    window.swipeSystem.swipe('super_like');
+                    break;
+
+                case ' ':
+                case 'Spacebar':
+                    e.preventDefault();
+                    window.swipeSystem.nextCharacter();
+                    break;
+            }
+        });
+
+        // Обновляем аватар пользователя
+        document.addEventListener('DOMContentLoaded', function() {
+            const userAvatar = document.getElementById('userAvatar');
+            const token = localStorage.getItem('access_token');
+            
+            if (token && userAvatar) {
+                // Получаем данные пользователя
+                fetch('/api/auth/profile/', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.username) {
+                        // Показываем первую букву имени
+                        userAvatar.textContent = data.username.charAt(0).toUpperCase();
+                    }
+                })
+                .catch(() => {
+                    // В случае ошибки оставляем иконку
+                    userAvatar.innerHTML = '<i class="fas fa-user"></i>';
+                });
+            }
+        });
+
+        // Проверяем авторизацию
+            window.location.href = '/login/';
+        }
+    </script>
+</body>
+</html>

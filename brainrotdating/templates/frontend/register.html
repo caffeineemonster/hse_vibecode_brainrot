@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация - BrainRot Dating</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Стили из login плюс специфичные для регистрации */
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: linear-gradient(to bottom, #312b2f, #97787E);
+        }
+
+        .auth-card {
+            background: white;
+            border-radius: 15px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-logo {
+            font-family: 'Big Shoulders Stencil', sans-serif;
+            font-size: 2.5rem;
+            color: #EFBDC6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 1rem;
+        }
+
+        .auth-logo i {
+            font-size: 3rem;
+        }
+
+        .auth-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: bold;
+            font-family: "Roboto Condensed", sans-serif;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: "Roboto Condensed", sans-serif;
+            transition: border 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #EFBDC6;
+        }
+
+        .auth-button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(to right, #EFBDC6, #97787E);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-family: "Roboto Condensed", sans-serif;
+        }
+
+        .auth-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(239, 189, 198, 0.4);
+        }
+
+        .auth-links {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .auth-link {
+            color: #EFBDC6;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .auth-link:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            background: #ffe6e6;
+            color: #ff3333;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .success-message {
+            background: #e6ffe6;
+            color: #33cc33;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .password-strength {
+            margin-top: 0.5rem;
+            height: 5px;
+            background: #ddd;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s, background 0.3s;
+        }
+
+        .terms {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .terms input {
+            margin-top: 5px;
+        }
+
+        .terms label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .terms a {
+            color: #EFBDC6;
+            text-decoration: none;
+        }
+
+        .password-requirements {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        .requirement {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 3px;
+        }
+
+        .requirement.valid {
+            color: #33cc33;
+        }
+
+        .requirement i {
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <i class="fas fa-brain"></i>
+                    BrainRot Dating
+                </div>
+                <p class="auth-subtitle">Создайте новый аккаунт</p>
+            </div>
+
+            <div id="errorMessage" class="error-message"></div>
+            <div id="successMessage" class="success-message"></div>
+
+            <form class="auth-form" id="registerForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Имя</label>
+                        <input type="text" class="form-input" id="firstName" placeholder="Введите имя" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Фамилия</label>
+                        <input type="text" class="form-input" id="lastName" placeholder="Введите фамилию">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Имя пользователя *</label>
+                    <input type="text" class="form-input" id="username" placeholder="Придумайте username" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email *</label>
+                    <input type="email" class="form-input" id="email" placeholder="user@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Пароль *</label>
+                    <input type="password" class="form-input" id="password" placeholder="Создайте пароль" required>
+                    <div class="password-strength">
+                        <div class="strength-bar" id="strengthBar"></div>
+                    </div>
+                    <div class="password-requirements" id="passwordRequirements">
+                        <div class="requirement" id="reqLength"><i class="fas fa-times"></i> Не менее 8 символов</div>
+                        <div class="requirement" id="reqUppercase"><i class="fas fa-times"></i> Заглавная буква</div>
+                        <div class="requirement" id="reqLowercase"><i class="fas fa-times"></i> Строчная буква</div>
+                        <div class="requirement" id="reqNumber"><i class="fas fa-times"></i> Цифра</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Подтвердите пароль *</label>
+                    <input type="password" class="form-input" id="confirmPassword" placeholder="Повторите пароль" required>
+                    <div id="passwordMatch" style="margin-top: 0.5rem; font-size: 0.9rem; display: none;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Дата рождения</label>
+                    <input type="date" class="form-input" id="birthDate">
+                </div>
+
+                <div class="terms">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms">
+                        Я согласен с <a href="/terms/">условиями использования</a> и <a href="/privacy/">политикой конфиденциальности</a>
+                    </label>
+                </div>
+
+                <button type="submit" class="auth-button" id="registerBtn">
+                    <i class="fas fa-user-plus"></i> Зарегистрироваться
+                </button>
+            </form>
+
+            <div class="auth-links">
+                <p>Уже есть аккаунт? <a href="/login/" class="auth-link">Войти</a></p>
+                <p><a href="/" class="auth-link">← Вернуться на главную</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+    <script>
+        // Проверка сложности пароля
+        document.getElementById('password').addEventListener('input', function(e) {
+            const password = e.target.value;
+            const strengthBar = document.getElementById('strengthBar');
+            const requirements = {
+                length: password.length >= 8,
+                uppercase: /[A-Z]/.test(password),
+                lowercase: /[a-z]/.test(password),
+                number: /\d/.test(password)
+            };
+
+            // Обновляем требования
+            document.getElementById('reqLength').className = requirements.length ? 'requirement valid' : 'requirement';
+            document.getElementById('reqLength').innerHTML = requirements.length ? 
+                '<i class="fas fa-check"></i> Не менее 8 символов' : 
+                '<i class="fas fa-times"></i> Не менее 8 символов';
+
+            document.getElementById('reqUppercase').className = requirements.uppercase ? 'requirement valid' : 'requirement';
+            document.getElementById('reqUppercase').innerHTML = requirements.uppercase ? 
+                '<i class="fas fa-check"></i> Заглавная буква' : 
+                '<i class="fas fa-times"></i> Заглавная буква';
+
+            document.getElementById('reqLowercase').className = requirements.lowercase ? 'requirement valid' : 'requirement';
+            document.getElementById('reqLowercase').innerHTML = requirements.lowercase ? 
+                '<i class="fas fa-check"></i> Строчная буква' : 
+                '<i class="fas fa-times"></i> Строчная буква';
+
+            document.getElementById('reqNumber').className = requirements.number ? 'requirement valid' : 'requirement';
+            document.getElementById('reqNumber').innerHTML = requirements.number ? 
+                '<i class="fas fa-check"></i> Цифра' : 
+                '<i class="fas fa-times"></i> Цифра';
+
+            // Считаем силу пароля
+            let strength = 0;
+            if (requirements.length) strength += 25;
+            if (requirements.uppercase) strength += 25;
+            if (requirements.lowercase) strength += 25;
+            if (requirements.number) strength += 25;
+
+            // Обновляем полоску
+            strengthBar.style.width = strength + '%';
+            
+            // Цвет полоски
+            if (strength < 50) {
+                strengthBar.style.background = '#ff3333';
+            } else if (strength < 75) {
+                strengthBar.style.background = '#ff9900';
+            } else {
+                strengthBar.style.background = '#33cc33';
+            }
+
+            // Проверяем совпадение паролей
+            checkPasswordMatch();
+        });
+
+        // Проверка совпадения паролей
+        document.getElementById('confirmPassword').addEventListener('input', checkPasswordMatch);
+
+        function checkPasswordMatch() {
+            const password = document.getElementById('password').value;
+            const confirm = document.getElementById('confirmPassword').value;
+            const matchDiv = document.getElementById('passwordMatch');
+            
+            if (confirm.length === 0) {
+                matchDiv.style.display = 'none';
+                return;
+            }
+            
+            matchDiv.style.display = 'block';
+            
+            if (password === confirm) {
+                matchDiv.innerHTML = '<span style="color: #33cc33;"><i class="fas fa-check"></i> Пароли совпадают</span>';
+            } else {
+                matchDiv.innerHTML = '<span style="color: #ff3333;"><i class="fas fa-times"></i> Пароли не совпадают</span>';
+            }
+        }
+
+        // Регистрация
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!document.getElementById('terms').checked) {
+                document.getElementById('errorMessage').textContent = 'Необходимо согласиться с условиями';
+                document.getElementById('errorMessage').style.display = 'block';
+                return;
+            }
+
+            if (document.getElementById('password').value !== document.getElementById('confirmPassword').value) {
+                document.getElementById('errorMessage').textContent = 'Пароли не совпадают';
+                document.getElementById('errorMessage').style.display = 'block';
+                return;
+            }
+
+            const btn = document.getElementById('registerBtn');
+            
+            // Показываем загрузку
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Регистрация...';
+            btn.disabled = true;
+            
+            try {
+                const response = await fetch('/api/auth/register/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: document.getElementById('username').value,
+                        email: document.getElementById('email').value,
+                        password: document.getElementById('password').value,
+                        first_name: document.getElementById('firstName').value,
+                        last_name: document.getElementById('lastName').value,
+                        birth_date: document.getElementById('birthDate').value || null
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Сохраняем токен
+                    localStorage.setItem('access_token', data.access);
+                    localStorage.setItem('refresh_token', data.refresh);
+                    
+                    // Показываем успех
+                    document.getElementById('successMessage').textContent = data.message || 'Регистрация успешна!';
+                    document.getElementById('successMessage').style.display = 'block';
+                    
+                    // Редирект через 2 секунды
+                    setTimeout(() => {
+                        if (data.test_required) {
+                            window.location.href = data.test_url || '/test/';
+                        } else {
+                            window.location.href = '/profile/';
+                        }
+                    }, 2000);
+                } else {
+                    // Обработка ошибок
+                    let errorMsg = '';
+                    if (typeof data === 'object') {
+                        for (let key in data) {
+                            if (Array.isArray(data[key])) {
+                                errorMsg += data[key].join(', ') + ' ';
+                            } else {
+                                errorMsg += data[key] + ' ';
+                            }
+                        }
+                    } else {
+                        errorMsg = data.detail || data.message || 'Ошибка регистрации';
+                    }
+                    throw new Error(errorMsg);
+                }
+            } catch (error) {
+                document.getElementById('errorMessage').textContent = error.message;
+                document.getElementById('errorMessage').style.display = 'block';
+            } finally {
+                // Восстанавливаем кнопку
+                btn.innerHTML = '<i class="fas fa-user-plus"></i> Зарегистрироваться';
+                btn.disabled = false;
+            }
+        });
+
+        // Проверяем если уже залогинен
+        if (localStorage.getItem('access_token')) {
+            window.location.href = '/profile/';
+        }
+    </script>
+</body>
+</html>

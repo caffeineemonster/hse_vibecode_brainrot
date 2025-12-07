@@ -32,18 +32,19 @@ class RegisterView(generics.CreateAPIView):
         user.last_login = timezone.now()
         user.save()
 
+        # Создаем BrainRot профиль
+        user.create_brainrot_profile()
+
         # Создаем JWT токены
         refresh = RefreshToken.for_user(user)
-
-        # Создаем BrainRot профиль (должно создаться через сигнал)
-        if hasattr(user, 'create_brainrot_profile'):
-            user.create_brainrot_profile()
 
         return Response({
             'user': UserProfileSerializer(user, context=self.get_serializer_context()).data,
             'refresh': str(refresh),
             'access': str(refresh.access_token),
-            'message': 'Регистрация успешна! Добро пожаловать в BrainRot Dating! 🎉'
+            'message': 'Регистрация успешна! Пройди тест, чтобы узнать своего BrainRot персонажа! 🎭',
+            'test_required': True,  # Флаг, что нужно пройти тест
+            'test_url': '/api/test/brainrot/questions/'
         }, status=status.HTTP_201_CREATED)
 
 

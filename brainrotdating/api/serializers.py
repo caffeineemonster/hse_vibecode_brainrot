@@ -1,8 +1,18 @@
-# api/serializers.py
+# api/serializers.py - ЗАМЕНИТЬ ВЕСЬ ФАЙЛ на:
 from rest_framework import serializers
 from characters.models import BrainRotCharacter, CharacterTrait
 from .models import Question, AnswerOption, TestResult, Swipe, CompatibilityMatrix
+from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
+from rest_framework.validators import UniqueValidator
+from django.core.validators import EmailValidator
+from datetime import date
+import re
 
+User = get_user_model()
+
+
+# === СЕРИАЛИЗАТОРЫ BRAINROT ТЕСТА ===
 
 class BrainRotCharacterSerializer(serializers.ModelSerializer):
     """Сериализатор для персонажей в свайпере"""
@@ -22,41 +32,42 @@ class BrainRotCharacterSerializer(serializers.ModelSerializer):
         return [{'name': t.name, 'type': t.get_trait_type_display()} for t in traits]
 
 
-class QuestionSerializer(serializers.ModelSerializer):
-    """Сериализатор для вопросов с вариантами ответов"""
+class BrainRotTestQuestionSerializer(serializers.ModelSerializer):
+    """Сериализатор для вопросов BrainRot теста"""
     options = serializers.SerializerMethodField()
 
     class Meta:
         model = Question
-        fields = ['id', 'text', 'category', 'options']
+        fields = ['id', 'text', 'order', 'options']
 
     def get_options(self, obj):
-        options = obj.options.all()
-        return AnswerOptionSerializer(options, many=True).data
+        options = obj.options.all().order_by('order')
+        return BrainRotTestAnswerSerializer(options, many=True).data
 
 
-class AnswerOptionSerializer(serializers.ModelSerializer):
-    """Сериализатор для вариантов ответов"""
+class BrainRotTestAnswerSerializer(serializers.ModelSerializer):
+    """Сериализатор для ответов BrainRot теста"""
 
     class Meta:
         model = AnswerOption
-        fields = ['id', 'text', 'value']
+        fields = ['id', 'text', 'letter']
 
 
-class TestSubmissionSerializer(serializers.Serializer):
-    """Сериализатор для отправки ответов теста"""
+class BrainRotTestSubmitSerializer(serializers.Serializer):
+    """Сериализатор для отправки ответов BrainRot теста"""
     answers = serializers.ListField(
         child=serializers.DictField(),
         help_text="Список ответов вида [{'question_id': 1, 'answer_id': 3}, ...]"
     )
 
     def validate(self, data):
-        """Валидация ответов"""
         answers = data.get('answers', [])
-        if not answers:
-            raise serializers.ValidationError("Список ответов не может быть пустым")
+        if len(answers) != 15:
+            raise serializers.ValidationError(
+                f"Требуется 15 ответов, получено {len(answers)}"
+            )
 
-        # Проверяем, что все вопросы уникальны
+        # Проверяем уникальность вопросов
         question_ids = [answer.get('question_id') for answer in answers]
         if len(question_ids) != len(set(question_ids)):
             raise serializers.ValidationError("Дублируются ответы на один вопрос")
@@ -64,14 +75,37 @@ class TestSubmissionSerializer(serializers.Serializer):
         return data
 
 
-class TestResultSerializer(serializers.ModelSerializer):
-    """Сериализатор для результата теста"""
+class BrainRotTestResultSerializer(serializers.ModelSerializer):
+    """Сериализатор результата BrainRot теста"""
     character = BrainRotCharacterSerializer(read_only=True)
+    match_percentage = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
 
     class Meta:
         model = TestResult
-        fields = ['character', 'score', 'completed_at']
+        fields = ['character', 'scores', 'completed_at',
+                  'match_percentage', 'description']
 
+    def get_match_percentage(self, obj):
+        """Рассчитывает процент совпадения"""
+        if not obj.scores:
+            return 0
+
+        max_score = max(obj.scores.values())
+        total = sum(obj.scores.values())
+        return round((max_score / total) * 100, 1) if total > 0 else 0
+
+    def get_description(self, obj):
+        """Генерирует описание результата"""
+        from .utils.brainrot_test_logic import generate_result_description
+        return generate_result_description(
+            obj.character,
+            obj.scores,
+            self.get_match_percentage(obj)
+        )
+
+
+# === СЕРИАЛИЗАТОРЫ СВАЙПОВ И СОВМЕСТИМОСТИ ===
 
 class SwipeSerializer(serializers.ModelSerializer):
     """Сериализатор для свайпов"""
@@ -128,17 +162,28 @@ class CharacterMatchSerializer(serializers.Serializer):
     reasons = serializers.ListField(child=serializers.CharField())
 
 
-# api/serializers.py (дополнение)
-from rest_framework import serializers
-from django.contrib.auth import get_user_model
-from django.contrib.auth.password_validation import validate_password
-from rest_framework.validators import UniqueValidator
-from django.core.validators import EmailValidator
-from datetime import date
-import re
+# === СЕРИАЛИЗАТОРЫ АУТЕНТИФИКАЦИИ (если они тут нужны) ===
+# Если они в отдельном файле - удалить отсюда
 
-User = get_user_model()
+# === ОПЦИОНАЛЬНО: если нужны здесь сериализаторы пользователя ===
+class UserProfileSerializer(serializers.ModelSerializer):
+    """Сериализатор профиля пользователя"""
+    age = serializers.IntegerField(read_only=True)
+    brainrot_character = serializers.SerializerMethodField()
 
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name',
+                  'birth_date', 'age', 'phone', 'city', 'bio',
+                  'brainrot_character', 'date_joined', 'last_login']
+
+    def get_brainrot_character(self, obj):
+        if hasattr(obj, 'brainrot_test_result') and obj.brainrot_test_result.character:
+            return BrainRotCharacterSerializer(obj.brainrot_test_result.character).data
+        return None
+
+
+# === СЕРИАЛИЗАТОРЫ АУТЕНТИФИКАЦИИ ===
 
 class RegisterSerializer(serializers.ModelSerializer):
     """Сериализатор для регистрации"""
@@ -183,6 +228,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def validate_username(self, value):
         """Валидация имени пользователя"""
+        import re
         if not re.match(r'^[a-zA-Z0-9_.]+$', value):
             raise serializers.ValidationError(
                 "Имя пользователя может содержать только буквы, цифры, точку и подчеркивание"
@@ -193,6 +239,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def validate_birth_date(self, value):
         """Валидация даты рождения"""
+        from datetime import date
         today = date.today()
         age = today.year - value.year - ((today.month, today.day) < (value.month, value.day))
 
@@ -208,7 +255,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError({"password": "Пароли не совпадают"})
 
-        # Проверяем сложность пароля
         password = attrs['password']
         if len(password) < 8:
             raise serializers.ValidationError({"password": "Пароль должен быть не менее 8 символов"})
@@ -221,16 +267,13 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Создание пользователя"""
-        # Убираем password2 из данных
         password2 = validated_data.pop('password2')
         password = validated_data.pop('password')
 
-        # Извлекаем дополнительные поля
         birth_date = validated_data.pop('birth_date')
         phone = validated_data.pop('phone', '')
         city = validated_data.pop('city', '')
 
-        # Создаем пользователя
         user = User.objects.create(
             **validated_data,
             birth_date=birth_date,
@@ -238,12 +281,12 @@ class RegisterSerializer(serializers.ModelSerializer):
             city=city
         )
 
-        # Устанавливаем пароль
         user.set_password(password)
         user.save()
 
         # Автоматически назначаем возрастную категорию
-        user.assign_age_category()
+        if hasattr(user, 'assign_age_category'):
+            user.assign_age_category()
 
         return user
 
@@ -283,42 +326,6 @@ class LoginSerializer(serializers.Serializer):
 
         attrs['user'] = user
         return attrs
-
-
-class UserProfileSerializer(serializers.ModelSerializer):
-    """Сериализатор профиля пользователя"""
-    age = serializers.SerializerMethodField()
-    age_category = serializers.SerializerMethodField()
-    brainrot_character = serializers.SerializerMethodField()
-
-    class Meta:
-        model = User
-        fields = ('id', 'username', 'email', 'first_name', 'last_name',
-                  'birth_date', 'age', 'age_category', 'phone', 'city', 'bio',
-                  'brainrot_character', 'date_joined', 'last_login')
-        read_only_fields = ('id', 'date_joined', 'last_login')
-
-    def get_age(self, obj):
-        return obj.age
-
-    def get_age_category(self, obj):
-        if obj.age_category:
-            return {
-                'id': obj.age_category.id,
-                'name': obj.age_category.name,
-                'generation': obj.age_category.get_generation_display(),
-                'subcategory': obj.age_category.subcategory,
-            }
-        return None
-
-    def get_brainrot_character(self, obj):
-        if hasattr(obj, 'brainrot_profile') and obj.brainrot_profile.main_character:
-            return {
-                'id': obj.brainrot_profile.main_character.id,
-                'name': obj.brainrot_profile.main_character.name,
-                'category': obj.brainrot_profile.main_character.get_category_display(),
-            }
-        return None
 
 
 class ChangePasswordSerializer(serializers.Serializer):

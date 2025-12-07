@@ -13,6 +13,8 @@ urlpatterns = [
 
     # Для авторизации (опционально, если нужен просмотр API в браузере)
     path('api-auth/', include('rest_framework.urls')),
+
+    path('api/chat/', include('chat.urls')),
 ]
 
 # Для обслуживания медиафайлов в разработке

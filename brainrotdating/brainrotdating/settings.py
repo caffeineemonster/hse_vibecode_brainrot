@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'users',
     'characters',
     'api',
+    'channels',
+    'chat',
 
     'django.contrib.admin',  # После пользовательских приложений
 ]
@@ -166,3 +168,16 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+
+ASGI_APPLICATION = 'brainrotdating.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',  # Для разработки
+        # Для продакшена используй Redis:
+        # 'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        # 'CONFIG': {
+        #     "hosts": [('127.0.0.1', 6379)],
+        # },
+    },
+}

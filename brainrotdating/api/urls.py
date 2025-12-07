@@ -32,4 +32,5 @@ urlpatterns = [
 
     # Для просмотра API в браузере
     path('api-auth/', include('rest_framework.urls')),
+    path('chat/', include('chat.urls')),
 ]
